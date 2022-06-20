@@ -6,8 +6,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle('PizzaFresh')
-    .setDescription('Aplicação para gestão das mesas de uma pizzaria')
+    .setTitle('Tapiocaria')
+    .setDescription('Aplicação para gestão das mesas de uma tapiocaria')
     .setVersion('1.0.0')
     .addTag('status')
     .addTag('table')
