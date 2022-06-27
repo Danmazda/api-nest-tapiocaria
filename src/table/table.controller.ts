@@ -50,10 +50,11 @@ export class TableController {
   @ApiOperation({
     summary: 'Deletar uma mesa',
   })
-  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id') id: string): void {
-    this.tableService.delete(id);
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<void> {
+    //Nest se vira com promises retornadas, mas se for apenas chamar a promise tem que usar await
+    await this.tableService.delete(id);
   }
 
   //update
