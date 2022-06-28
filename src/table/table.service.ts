@@ -28,7 +28,11 @@ export class TableService {
   }
   create(dto: CreateTableDto): Promise<Table> {
     const data: Table = { ...dto };
-    return this.prisma.table.create({ data }).catch(this.handleError);
+    try {
+      return this.prisma.table.create({ data });
+    } catch (error) {
+      this.handleError(error);
+    }
   }
   async delete(id: string): Promise<void> {
     await this.findById(id);
@@ -38,15 +42,19 @@ export class TableService {
     //Partial torna o que é requirido em opicional
     await this.findById(id);
     const data: Partial<Table> = { ...dto };
-    return this.prisma.table
-      .update({ where: { id }, data })
-      .catch(this.handleError);
+    try {
+      return this.prisma.table.update({ where: { id }, data });
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   handleError(error: Error) {
     const errorLines = error.message?.split('\n');
     const lastLine = errorLines[errorLines.length - 1].trim();
+    if (!lastLine) {
+      console.error(error);
+    }
     throw new UnprocessableEntityException(lastLine || 'Erro ao criar mesa.');
-    return undefined;
   }
 }
