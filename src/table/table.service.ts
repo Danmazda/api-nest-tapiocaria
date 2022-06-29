@@ -14,7 +14,6 @@ export class TableService {
 
   async findById(id: string) {
     const record = await this.prisma.table.findUnique({ where: { id } });
-    console.log(record);
     if (!record) {
       throw new NotFoundException(`${id} não encontrado!`);
     }
