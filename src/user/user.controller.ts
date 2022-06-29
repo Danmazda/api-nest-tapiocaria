@@ -22,8 +22,6 @@ export class UserController {
   })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    delete createUserDto.confirmPassword;
-
     return this.userService.create(createUserDto);
   }
 
@@ -48,7 +46,6 @@ export class UserController {
   })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    delete updateUserDto.confirmPassword;
     return this.userService.update(id, updateUserDto);
   }
 
