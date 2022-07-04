@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, IsUrl, MinLength } from 'class-validator';
 export class CreateProductDto {
-  id?: string;
   @ApiProperty({
     description: 'Nome do produto',
     example: 'Frajola',
@@ -29,6 +28,4 @@ export class CreateProductDto {
   })
   @IsUrl()
   image: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
