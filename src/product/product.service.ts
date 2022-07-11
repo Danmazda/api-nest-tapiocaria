@@ -1,10 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle-error.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
@@ -17,7 +14,7 @@ export class ProductService {
     try {
       return this.prisma.product.create({ data });
     } catch (error) {
-      this.handleError(error);
+      handleError(error);
     }
   }
 
@@ -45,16 +42,7 @@ export class ProductService {
     try {
       return this.prisma.product.update({ where: { id }, data });
     } catch (error) {
-      this.handleError(error);
+      handleError(error);
     }
-  }
-
-  handleError(error: Error) {
-    const errorLines = error.message?.split('\n');
-    const lastLine = errorLines[errorLines.length - 1].trim();
-    if (!lastLine) {
-      console.error(error);
-    }
-    throw new UnprocessableEntityException(lastLine || 'Erro ao criar mesa.');
   }
 }

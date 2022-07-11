@@ -1,15 +1,14 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { handleError } from 'src/utils/handle-error.util';
 
 @Injectable()
 export class UserService {
@@ -49,7 +48,7 @@ export class UserService {
     try {
       return await this.prisma.user.create({ data, select: this.userSelect });
     } catch (error) {
-      this.handleError(error);
+      handleError(error);
     }
   }
   async delete(id: string): Promise<void> {
@@ -80,16 +79,7 @@ export class UserService {
         select: this.userSelect,
       });
     } catch (error) {
-      this.handleError(error);
+      handleError(error);
     }
-  }
-
-  handleError(error: Error) {
-    const errorLines = error.message?.split('\n');
-    const lastLine = errorLines[errorLines.length - 1].trim();
-    if (!lastLine) {
-      throw new ConflictException(error.message);
-    }
-    throw new UnprocessableEntityException(lastLine || 'Erro ao criar mesa.');
   }
 }
