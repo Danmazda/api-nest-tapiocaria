@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle-error.util';
 import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
@@ -11,31 +12,39 @@ export class OrderService {
       user: { connect: { id: dto.userId } },
       table: { connect: { number: dto.tableNumber } },
       products: {
-        connect: dto.products.map((productId) => ({ id: productId })),
+        createMany: {
+          data: dto.products,
+        },
       },
     };
 
-    return await this.prisma.order.create({
-      data,
-      select: {
-        id: true,
-        user: {
-          select: {
-            nickname: true,
+    return await this.prisma.order
+      .create({
+        data,
+        select: {
+          id: true,
+          user: {
+            select: {
+              nickname: true,
+            },
+          },
+          table: {
+            select: {
+              number: true,
+            },
+          },
+          products: {
+            select: {
+              product: {
+                select: {
+                  name: true,
+                },
+              },
+            },
           },
         },
-        table: {
-          select: {
-            number: true,
-          },
-        },
-        products: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
+      })
+      .catch(handleError);
   }
 
   findAll() {
@@ -80,7 +89,11 @@ export class OrderService {
           },
         },
         products: {
-          select: { id: true, name: true, description: true, image: true },
+          select: {
+            product: { select: { id: true, name: true } },
+            quantity: true,
+            description: true,
+          },
         },
       },
     });

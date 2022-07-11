@@ -36,7 +36,7 @@ model Product{
   description String
   price Float
   image String
-  orders Order[]
+  orders OrderProduct[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("product")
@@ -48,8 +48,20 @@ model Order{
   userId String
   table Table @relation(fields: [tableId], references: [id])
   tableId String
-  products Product[]
+  products OrderProduct[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("order")
+}
+
+model OrderProduct{
+  id String @id @default(uuid())
+  order Order @relation(fields: [orderId], references: [id])
+  orderId String
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity Int
+  description String
+  @@map("order_to_product")
+  @@unique([orderId, productId])
 }
