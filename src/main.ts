@@ -10,7 +10,9 @@ async function bootstrap() {
     .setDescription('Aplicação para gestão das mesas de uma tapiocaria')
     .setVersion('1.0.0')
     .addTag('status')
+    .addTag('auth')
     .addTag('table')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
