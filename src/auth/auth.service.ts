@@ -5,7 +5,7 @@ import { LoginDto } from './dto/login.dto';
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
-  login(dto: LoginDto) {
-    return { token: '', user: dto };
+  async login(dto: LoginDto) {
+    return { token: '', user: undefined };
   }
 }
