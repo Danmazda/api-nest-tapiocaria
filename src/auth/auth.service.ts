@@ -1,11 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
   async login(dto: LoginDto) {
-    return { token: '', user: undefined };
+    const { nickname, password } = dto;
+    const user = await this.prisma.user.findUnique({
+      where: { nickname },
+      select: {
+        nickname: true,
+        name: true,
+        image: true,
+        password: true,
+      },
+    });
+    if (!user) throw new NotFoundException('User not found!');
+    if (await bcrypt.compare(password, user.password)) {
+      return { token: '', user };
+    } else {
+      throw new ForbiddenException('Access Denied!');
+    }
   }
 }
