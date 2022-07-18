@@ -6,10 +6,14 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtservice: JwtService,
+  ) {}
   async login(dto: LoginDto) {
     const { nickname, password } = dto;
     const user = await this.prisma.user.findUnique({
@@ -23,7 +27,8 @@ export class AuthService {
     });
     if (!user) throw new NotFoundException('User not found!');
     if (await bcrypt.compare(password, user.password)) {
-      return { token: '', user };
+      delete user.password;
+      return { token: this.jwtservice.sign({ nickname }), user };
     } else {
       throw new ForbiddenException('Access Denied!');
     }
