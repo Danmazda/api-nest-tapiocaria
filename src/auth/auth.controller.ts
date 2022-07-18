@@ -9,9 +9,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
+import { LoggedUser } from './logged-user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -29,7 +31,7 @@ export class AuthController {
   @UseGuards(AuthGuard())
   @ApiOperation({ summary: 'Mostra o usuário logado.' })
   @ApiBearerAuth()
-  profile() {
-    return { message: 'Ação bem-sucedida' };
+  profile(@LoggedUser() user: User) {
+    return user;
   }
 }
